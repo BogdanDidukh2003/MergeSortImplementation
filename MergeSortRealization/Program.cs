@@ -6,7 +6,7 @@ namespace MergeSortRealization
 {
     public class Program
     {
-        private enum SortOrder
+        public enum SortOrder
         {
             asc,
             desc 
@@ -39,21 +39,23 @@ namespace MergeSortRealization
             _stopwatch.Start();
 
             
-            _outputArray = MergeSort(_arrayToSort);
+            _outputArray = MergeSort(_arrayToSort, _sortOrder);
             
             _stopwatch.Stop();
 
             _time = _stopwatch.Elapsed.TotalMilliseconds;
             
             ConsoleOutput();
+
+            //return _outputArray;
         }
 
-        private static void ConsoleOutput()
+        public static void ConsoleOutput()
         {
             Console.WriteLine("MergeSort:");
             Console.WriteLine(_time + "ms");
             Console.WriteLine("Comparisons:" + _comparisonsCounter);
-            foreach (var item in MergeSort(_outputArray))
+            foreach (var item in _outputArray)
             {
                 _output += item;
                 _output += Separator;
@@ -63,7 +65,7 @@ namespace MergeSortRealization
             Console.WriteLine(_output);
         }
         
-        public static int[] MergeSort(int[] inputArray)
+        public static int[] MergeSort(int[] inputArray, SortOrder sortOrder)
         {
             if (inputArray.Length <= 1)
             {
@@ -79,13 +81,13 @@ namespace MergeSortRealization
             Array.Copy(inputArray, 0, leftArray, 0, middleIndex);
             Array.Copy(inputArray, middleIndex, rightArray, 0, inputArray.Length - middleIndex);
             
-            leftArray = MergeSort(leftArray);
-            rightArray = MergeSort(rightArray);
-            result = Merge(leftArray, rightArray);  
+            leftArray = MergeSort(leftArray, sortOrder);
+            rightArray = MergeSort(rightArray, sortOrder);
+            result = Merge(leftArray, rightArray, sortOrder);  
             return result;
         }
   
-        public static int[] Merge(int[] left, int[] right)
+        public static int[] Merge(int[] left, int[] right, SortOrder sortOrder)
         {
             int resultLength = right.Length + left.Length;
             int[] result = new int[resultLength];
@@ -95,7 +97,7 @@ namespace MergeSortRealization
             {
                 if (indexLeft < left.Length && indexRight < right.Length)  
                 {  
-                    if (_sortOrder == SortOrder.asc)
+                    if (sortOrder == SortOrder.asc)
                     {
                         if (left[indexLeft] <= right[indexRight])
                         {
@@ -111,7 +113,7 @@ namespace MergeSortRealization
                         }
                     }
 
-                    if (_sortOrder == SortOrder.desc)
+                    if (sortOrder == SortOrder.desc)
                     {
                         if (left[indexLeft] >= right[indexRight])
                         {
