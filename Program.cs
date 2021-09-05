@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
-using System.Text.RegularExpressions;
-using Microsoft.VisualBasic;
 
 namespace MergeSortRealization
 {
@@ -10,42 +8,42 @@ namespace MergeSortRealization
     {
         private enum SortOrder
         {
-            ASC,
-            DESC 
+            asc,
+            desc 
         }
 
         private const char Separator = ',';
         
         private static SortOrder _sortOrder;
-        private static int[] _inputArray;
-        private static int[] _outputArray;
+        private static int[] _arrayToSort;
         private static bool  _isValidFirstArg;
         private static Stopwatch _stopwatch;
-        private static long _time;
+        private static double _time;
         private static int _comparisonsCounter = 0;
-        private static int _swapsCounter = 0;
-        private static string _output = new string(string.Empty);
-        
+        private static string _output = String.Empty;
+        private static int[] _outputArray;
+
         public static void Main(string[] args)
         {
             _stopwatch = new Stopwatch();
-            _stopwatch.Start();
 
             _isValidFirstArg = Enum.TryParse(args[0], out _sortOrder);
-            _inputArray = args[1].Split(Separator).Select(int.Parse).ToArray();
-            _outputArray = new int[_inputArray.Length];
+            _arrayToSort = args[1].Split(Separator).Select(int.Parse).ToArray();
 
             if (!_isValidFirstArg)
             {
                 Console.WriteLine("INVALID COMMAND");
                 throw new ArgumentException();
             }
+
+            _stopwatch.Start();
+
             
-            MergeSort();
+            _outputArray = MergeSort(_arrayToSort);
             
             _stopwatch.Stop();
 
-            _time = _stopwatch.ElapsedMilliseconds;
+            _time = _stopwatch.Elapsed.TotalMilliseconds;
             
             ConsoleOutput();
         }
@@ -55,8 +53,7 @@ namespace MergeSortRealization
             Console.WriteLine("MergeSort:");
             Console.WriteLine(_time + "ms");
             Console.WriteLine("Comparisons:" + _comparisonsCounter);
-            Console.WriteLine("Swaps:" + _swapsCounter);
-            foreach (var item in _outputArray)
+            foreach (var item in MergeSort(_outputArray))
             {
                 _output += item;
                 _output += Separator;
@@ -65,10 +62,87 @@ namespace MergeSortRealization
             
             Console.WriteLine(_output);
         }
-
-        private static void MergeSort()
+        
+        public static int[] MergeSort(int[] inputArray)
         {
-            _outputArray = _inputArray;
+            if (inputArray.Length <= 1)
+            {
+                return inputArray;
+            }
+
+            int[] result = new int[inputArray.Length];  
+
+            int middleIndex = inputArray.Length / 2;  
+            int[] leftArray = new int[middleIndex];
+            int[] rightArray = new int[inputArray.Length - middleIndex]; 
+            
+            Array.Copy(inputArray, 0, leftArray, 0, middleIndex);
+            Array.Copy(inputArray, middleIndex, rightArray, 0, inputArray.Length - middleIndex);
+            
+            leftArray = MergeSort(leftArray);
+            rightArray = MergeSort(rightArray);
+            result = Merge(leftArray, rightArray);  
+            return result;
+        }
+  
+        public static int[] Merge(int[] left, int[] right)
+        {
+            int resultLength = right.Length + left.Length;
+            int[] result = new int[resultLength];
+            int indexLeft = 0, indexRight = 0, indexResult = 0;  
+            
+            while (indexLeft < left.Length || indexRight < right.Length)
+            {
+                if (indexLeft < left.Length && indexRight < right.Length)  
+                {  
+                    if (_sortOrder == SortOrder.asc)
+                    {
+                        if (left[indexLeft] <= right[indexRight])
+                        {
+                            result[indexResult] = left[indexLeft];
+                            indexLeft++;
+                            indexResult++;
+                        }
+                        else
+                        {
+                            result[indexResult] = right[indexRight];
+                            indexRight++;
+                            indexResult++;
+                        }
+                    }
+
+                    if (_sortOrder == SortOrder.desc)
+                    {
+                        if (left[indexLeft] >= right[indexRight])
+                        {
+                            result[indexResult] = left[indexLeft];
+                            indexLeft++;
+                            indexResult++;
+                        }
+                        else
+                        {
+                            result[indexResult] = right[indexRight];
+                            indexRight++;
+                            indexResult++;
+                        }
+                    }
+
+                    _comparisonsCounter++;
+                }
+                else if (indexLeft < left.Length)
+                {
+                    result[indexResult] = left[indexLeft];
+                    indexLeft++;
+                    indexResult++;
+                }
+                else if (indexRight < right.Length)
+                {
+                    result[indexResult] = right[indexRight];
+                    indexRight++;
+                    indexResult++;
+                }  
+            }
+            return result;
         }
     }
 }
