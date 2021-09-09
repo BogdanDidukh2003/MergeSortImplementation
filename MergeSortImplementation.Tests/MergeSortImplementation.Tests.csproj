@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MergeSortRealization\MergeSortRealization.csproj" />
+    <ProjectReference Include="..\MergeSortImplementation\MergeSortImplementation.csproj" />
   </ItemGroup>
 
 </Project>

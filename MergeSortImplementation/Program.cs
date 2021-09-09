@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Linq;
 
-namespace MergeSortRealization
+namespace MergeSortImplementation
 {
     public class Program
     {

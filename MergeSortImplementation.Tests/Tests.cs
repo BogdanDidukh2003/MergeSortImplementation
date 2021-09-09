@@ -2,7 +2,7 @@ using System.Diagnostics;
 using System.Text;
 using NUnit.Framework;
 
-namespace MergeSortRealization.Tests
+namespace MergeSortImplementation.Tests
 {
     public class Tests
     {
